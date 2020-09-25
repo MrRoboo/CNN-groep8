@@ -1,19 +1,20 @@
-from TrainingsDataManager.imageDataManager import ImageDataManager
 from CNN.customModel import CustomModel
+from Observation.observation import Observation
+from Controller.controller import Controller
+from UI.gui import Gui
+from TrainingsDataManager.imageDataManager import ImageDataManager
 
-dataManager = ImageDataManager("C:/Test/Training")
-X, y = dataManager.createTrainingData(50)
+if __name__ == '__main__':
+    model_name = 'model_name'                                           # TODO
+    categories = ["Caffe Americano", "Cappuccino", "Latte Macchiato"]   # TODO
+    epochs = 10                                                         # TODO
+    image_width = 800                                                   # TODO
+    image_height = 600                                                  # TODO
 
-# model = CustomModel("modelDogTest", X, y)
-# model.configure()
-# model.train(5)
-# model.save()
+    model = CustomModel(model_name, categories, epochs)
+    observation = Observation(image_width, image_height)
+    manager = ImageDataManager(image_width, image_height)
+    controller = Controller(model, observation, manager)
+    gui = Gui(controller)
 
-model2 = CustomModel("modelDogTest", X, y)
-model2.load()
-# model2.train(5)
-
-validationData = dataManager.createValidationData("C:/Test/Validation", 50)
-result = model2.predict(validationData, dataManager.dataCategories)
-
-print(result)
+    gui.root.mainloop()

@@ -8,26 +8,27 @@ import pickle
 
 class ImageDataManager:
 
-    def __init__(self, directory):
-        self.directory = directory
+    def __init__(self, image_width, image_height):
         self.dataCategories = []
+        self.image_width = image_width
+        self.image_height = image_height
 
-    def load(self):
-        pickleInX = open(self.directory + ".X.pickle", "rb")
-        pickleInY = open(self.directory + ".y.pickle", "rb")
+    def load(self, directory):
+        pickleInX = open(directory + ".X.pickle", "rb")
+        pickleInY = open(directory + ".y.pickle", "rb")
 
         return pickle.load(pickleInX), pickle.load(pickleInY)
 
-    def save(self, X, y):
-        pickleOutX = open(self.directory + ".X.pickle", "wb")
+    def save(self, directory, X, y):
+        pickleOutX = open(directory + ".X.pickle", "wb")
         pickle.dump(X, pickleOutX)
         pickleOutX.close()
 
-        pickleOutY = open(self.directory + ".y.pickle", "wb")
+        pickleOutY = open(directory + ".y.pickle", "wb")
         pickle.dump(y, pickleOutY)
         pickleOutY.close()
 
-    def __getImageData(self, directory, imageSize):
+    def __getImageData(self, directory):
         trainingData = []
 
         for root, dirs, files in os.walk(directory, topdown=False):
@@ -44,7 +45,7 @@ class ImageDataManager:
                 for img in os.listdir(fullPathName):
                     try:
                         imageArray = cv2.imread(os.path.join(fullPathName, img), cv2.IMREAD_GRAYSCALE)
-                        scaledImageArray = cv2.resize(imageArray, (imageSize, imageSize))
+                        scaledImageArray = cv2.resize(imageArray, (self.image_width, self.image_height))
                         trainingData.append([scaledImageArray, classNumber])
 
                     except Exception as e:
@@ -53,8 +54,8 @@ class ImageDataManager:
         # random.shuffle(trainingData)
         return trainingData
 
-    def createValidationData(self, directory, imageSize):
-        trainingData = self.__getImageData(directory, imageSize)
+    def createValidationData(self, directory):
+        trainingData = self.__getImageData(directory)
 
         X = []
         y = []
@@ -63,11 +64,11 @@ class ImageDataManager:
             X.append(data)
             y.append(category)
 
-        X, y = self.__normalize(X, y, imageSize)
+        X, y = self.__normalize(X, y)
         return X
 
-    def createTrainingData(self, imageSize):
-        trainingData = self.__getImageData(self.directory, imageSize)
+    def createTrainingData(self, directory):
+        trainingData = self.__getImageData(directory)
 
         X = []
         y = []
@@ -76,11 +77,11 @@ class ImageDataManager:
             X.append(data)
             y.append(category)
 
-        X, y = self.__normalize(X, y, imageSize)
+        X, y = self.__normalize(X, y)
         return X, y
 
-    def __normalize(self, X, y, imageSize):
-        X = np.array(X).reshape(-1, imageSize, imageSize, 1)
+    def __normalize(self, X, y):
+        X = np.array(X).reshape(-1, (self.image_height, self.image_width, 1))
         y = np.array(y)
         return X / 255.0, y
 
