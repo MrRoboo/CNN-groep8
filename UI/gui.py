@@ -10,6 +10,7 @@ from Controller.controller import Controller
 
 
 class Gui:
+
     observed_image: PhotoImage
 
     trainings_path = ""
