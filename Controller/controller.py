@@ -15,7 +15,7 @@ class Controller:
         self.manager = manager
 
         # Setup steps
-        self.model.load()
+        # self.model.load()
         self.observation.start_webcam()
 
     def __del__(self):

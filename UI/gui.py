@@ -13,6 +13,8 @@ class Gui:
 
     trainings_path = ""
 
+    after_id = 0
+
     # TODO create possibility to select your own image via GUI
     image_path = "C:\\Datasets\\PetImages\\Cat\\12.jpg"
 
@@ -21,7 +23,7 @@ class Gui:
         # SETUP GUI
         self.root = Tk()
         # self.root.geometry("500x700")
-        self.root.iconbitmap("C:\\Datasets\\coffee_icon.ico")
+        # self.root.iconbitmap("C:\\Datasets\\coffee_icon.ico")
         self.root.title("Coffee AI")
 
         # set IMAGE
@@ -65,9 +67,9 @@ class Gui:
         # TODO connect with controller
         image_array, result = self.controller.predict()
         self.update_gui(image_array)
+        self.after_id = self.root.after(100, self.start_observer) # Refresh the webcam image after 100 ms.
 
     def update_gui(self, array):
-        print(array)
         self.show_image.grid_forget()
         img = Image.fromarray(array, mode="RGB")
         imgtk = ImageTk.PhotoImage(img)
@@ -104,4 +106,5 @@ class Gui:
         return self.trainings_path
 
     def train(self):
+        self.root.after_cancel(self.after_id) # Cancel the refreshing of the webcam image
         self.controller.train(self.trainings_path)
