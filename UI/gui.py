@@ -6,8 +6,6 @@ import numpy as np
 import cv2
 import os
 
-from Controller.controller import Controller
-
 
 class Gui:
 
@@ -65,7 +63,7 @@ class Gui:
 
     def start_observer(self):
         # TODO connect with controller
-        image_array = self.controller.start_observer()
+        image_array, result = self.controller.predict()
         self.update_gui(image_array)
 
     def update_gui(self, array):
@@ -93,9 +91,9 @@ class Gui:
 
         # TODO implement trainbutton
         self.train_button.grid_forget()
-        self.train_button = Button(self.root, text="Train")
+        self.train_button = Button(self.root, text="Train", command=self.train)
         self.train_button.grid(row=6, column=0, columnspan=2, sticky=W + E + N + S, padx=10, pady=(10, 10))
-        print((self.trainings_path))
+        print(self.trainings_path)
 
     def show_observation_image(self, array):
         print(array)
@@ -104,3 +102,6 @@ class Gui:
 
     def get_training_directory(self):
         return self.trainings_path
+
+    def train(self):
+        self.controller.train(self.trainings_path)

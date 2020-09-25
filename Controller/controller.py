@@ -30,8 +30,8 @@ class Controller:
         """Takes an image with the camera, predicts the type of coffee
         and returns the image and result to the GUI."""
         frame = self.observation.read_frame()
-        results = self.model.predict(frame)
-
+        # results = self.model.predict(frame)
+        results = []
         if len(results) > 0:
             result = results[0]
         else:
@@ -43,3 +43,4 @@ class Controller:
 
         self.model.train(X, y)
         self.model.save()
+
